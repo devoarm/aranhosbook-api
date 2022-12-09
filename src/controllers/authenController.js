@@ -14,13 +14,15 @@ const login = async (req, res) => {
       .where("HR_USERNAME", body.username)
       .andWhere("HR_PASSWORD", md5(body.password))
       .limit(1);
-    if (checkLogin.length > 0) {
+    if (checkLogin.length > 0) {      
       let role = checkLogin[0].ID == leaderId ? "leader" : "user";
       var token = jwt.sign(
         {
           username: checkLogin[0].HR_USERNAME,
           userId: checkLogin[0].ID,
           role: role,
+          f_name: checkLogin[0].HR_FNAME,
+          l_name: checkLogin[0].HR_LNAME,
         },
         secret
       );
@@ -28,6 +30,7 @@ const login = async (req, res) => {
         status: 200,
         msg: "success",
         token: token,
+        results: checkLogin
       });
     } else {
       return res.json({

@@ -1,0 +1,11 @@
+SECRET_KEY=YS1fOW8iiAOm6VLVNWKjQYvFrsCg0q9xKc9Mp4FRoHD1LzJigQbCAxWqIZwOk+FcrvrIue/5nyppTr0TgYmORg==
+PORT=5000
+DOCUMENT_PATH=/Users/natthaphongngaongam/Devoloper/BookAran/documents/bookin
+
+LEADER_ID=372
+
+hostDB=localhost,
+portDB=3306,
+userDB = root,
+passwordDB = ,
+databaseDB = aranhosbook,
