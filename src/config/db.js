@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const db_office = require("knex")({
   client: "mysql2",
   connection: {
@@ -6,11 +8,11 @@ const db_office = require("knex")({
     // user: "aranhos",
     // password: "aranzjkowfh",
     // database: "hosofficedb",
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "aranhosbook",
+    host: process.env.hostDB,
+    port: process.env.portDB,
+    user: process.env.userDB,
+    password: process.env.passwordDB,
+    database: process.env.databaseDB,
   },
 });
-module.exports = db_office
+module.exports = db_office;

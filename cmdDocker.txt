@@ -1,2 +1,2 @@
-docker build . -t sign-hosoffice-api
-docker run -p 4488:8080 -d sign-hosoffice-api
+docker build . -t aranhosbook-api:0.0.1
+docker run -p 70:70 -d aranhosbook-api:0.0.1
