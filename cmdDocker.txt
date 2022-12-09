@@ -1,0 +1,2 @@
+docker build . -t sign-hosoffice-api
+docker run -p 4488:8080 -d sign-hosoffice-api
