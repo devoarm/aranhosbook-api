@@ -6,6 +6,8 @@ const auth = require("../middleware/auth");
 
 const multer = require("multer");
 const upload = multer({ dest: "./public/data/uploads/" });
+require("dotenv").config();
+const DOCUMENT_PATH = process.env.DOCUMENT_PATH;
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
@@ -14,7 +16,8 @@ router.get("/", function (req, res, next) {
 
 router.get("/book-index/:name", function (req, res, next) {
   var options = {
-    root: path.join(__dirname, hosOfficePath),
+    // root: path.join(__dirname, hosOfficePath),
+    root: DOCUMENT_PATH,
     dotfiles: "deny",
     headers: {
       "x-timestamp": Date.now(),
