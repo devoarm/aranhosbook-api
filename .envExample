@@ -1,8 +1,9 @@
 SECRET_KEY=
-PORT=
 DOCUMENT_PATH=
+PORT=
 
 LEADER_ID=
+NODE_ENV=
 
 hostDB=
 portDB=
