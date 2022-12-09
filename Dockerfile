@@ -1,17 +1,18 @@
-FROM node:18-alpine as base
+# Base Image
+FROM node:lts-alpine as base
 
 WORKDIR /src
-COPY package*.json ./
+COPY package*.json /
 EXPOSE 70
 
 FROM base as production
 ENV NODE_ENV=production
 RUN npm ci
-COPY . ./
+COPY . /
 CMD ["node", "bin/www"]
 
 FROM base as dev
 ENV NODE_ENV=development
 RUN npm install -g nodemon && npm install
-COPY . ./
+COPY . /
 CMD ["nodemon", "bin/www"]

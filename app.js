@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // console.log(path.join(__dirname, "public"));
 app.use("/", indexRouter);
-// app.use("/user", require("./src/routes/fileRoutes"));
+app.use("/user", require("./src/routes/userRoutes"));
 app.use("/file", require("./src/routes/fileRoutes"));
 app.use("/auth", require("./src/routes/authRoutes"));
 app.use("/book", require("./src/routes/bookRoutes"));

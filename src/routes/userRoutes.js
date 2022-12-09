@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.json('/User')
+  res.json({status:"OK",message:"Hosoffice Api"})
 });
 
 module.exports = router;
