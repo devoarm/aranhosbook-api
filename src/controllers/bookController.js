@@ -52,33 +52,51 @@ const BookDirector = async (req, res) => {
 
     return res.json({ status: 200, results: query });
   } catch (error) {
-    return res.json({ status: 500, err: error });
+    return res.json({ status: 500, results: error });
   }
 };
 const BookLeaderCount = async (req, res) => {
+  const { id } = req.params;
   try {
     const query = await db_office("book_index_send_leader")
-      .where("SEND_STATUS", "SEND")
+      .whereIn("SEND_STATUS", ["SEND", "CHECK"])
+      .andWhere("SEND_LD_HR_ID", id)
       .count("id as count")
       .first();
 
     return res.json({ status: 200, results: query });
   } catch (error) {
-    return res.json({ status: 500, err: error.message });
+    return res.json({ status: 500, results: error.message });
+  }
+};
+const BookIndexPersonCount = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = await db_office("book_send_person")
+      .where("HR_PERSON_ID", id)
+      // .andWhere("READ_STATUS", false)
+      .count("id as count")
+      .first();
+
+    return res.json({ status: 200, results: query });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
   }
 };
 const BookIndexSendLeader = async (req, res) => {
-  const { id } = req.params;
+  const { id, slug } = req.params;
+  const statusBook = slug == 1 ? ["SEND", "CHECK"] : ["YES", "NO"];
   try {
     const query = await db_office("book_index_send_leader as bl")
       .leftJoin("book_index as b", "bl.BOOK_ID", "b.ID")
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
-      .where("bl.SEND_STATUS", "SEND")
+      .whereIn("bl.SEND_STATUS", statusBook)
       .andWhere("bl.SEND_LD_HR_ID", id)
       .orderBy("bl.SEND_LD_DATE_TIME", "desc")
       .select(
         "b.BOOK_NAME",
+        "b.BOOK_NUMBER",
         "b.BOOK_DETAIL",
         "b.BOOK_URGENT_ID",
         "bu.URGENT_NAME",
@@ -88,7 +106,7 @@ const BookIndexSendLeader = async (req, res) => {
       );
     return res.json({ status: 200, results: query });
   } catch (error) {
-    return res.json({ status: 500, result: error.message });
+    return res.json({ status: 500, results: error.message });
   }
 };
 const BookIndexLeaderSign = async (req, res) => {
@@ -104,9 +122,9 @@ const BookIndexLeaderSign = async (req, res) => {
         TOP_LEADER_AC_DATE_TIME: req.body.TOP_LEADER_AC_DATE_TIME,
         TOP_LEADER_AC_CMD: req.body.TOP_LEADER_AC_CMD,
       });
-    return res.json({ status: 200, result: query });
+    return res.json({ status: 200, results: query });
   } catch (error) {
-    return res.json({ status: 500, result: error.message });
+    return res.json({ status: 500, results: error.message });
   }
 };
 const BookIndexPerson = async (req, res) => {
@@ -127,9 +145,9 @@ const BookIndexPerson = async (req, res) => {
         "bi.ID as BOOK_IMAGE_ID",
         "bi.FILE_TYPE"
       );
-    return res.json({ status: 200, result: query });
+    return res.json({ status: 200, results: query });
   } catch (error) {
-    return res.json({ status: 500, result: error.message });
+    return res.json({ status: 500, results: error.message });
   }
 };
 
@@ -140,4 +158,5 @@ module.exports = {
   BookIndexLeaderSign,
   BookLeaderCount,
   BookIndexPerson,
+  BookIndexPersonCount,
 };
