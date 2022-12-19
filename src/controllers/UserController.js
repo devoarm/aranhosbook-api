@@ -5,8 +5,7 @@ require("dotenv").config();
 
 const secret = process.env.SECRET_KEY;
 
-const SearchHr = async (req, res) => {
-  
+const SearchHr = async (req, res) => {  
   const { slug } = req.query;
   console.log(slug)
   try {

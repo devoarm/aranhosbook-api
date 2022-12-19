@@ -5,6 +5,7 @@ const hosOfficePath = "../../../documents/bookin";
 const auth = require("../middleware/auth");
 const fs = require("fs");
 const multer = require("multer");
+const { CheckFile } = require("../controllers/fileController");
 const upload = multer({ dest: "./public/data/uploads/" });
 require("dotenv").config();
 const DOCUMENT_PATH = process.env.DOCUMENT_PATH;
@@ -13,20 +14,19 @@ const DOCUMENT_PATH = process.env.DOCUMENT_PATH;
 router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
+router.get("/check/:name", CheckFile);
 
 router.get("/book-index/:name", async function (req, res, next) {
   var fileName = req.params.name;
-  var haveFilse = false;  
+  var haveFilse = false;
   // fs.readdirSync(path.join(__dirname, "../documents/bookin")).forEach(
-  fs.readdirSync(DOCUMENT_PATH).forEach(
-    (file) => {
-      console.log(`filename : ${fileName}`);
-      if (file === `${fileName}`) {
-        haveFilse = true;
-        console.log(`file : ${file}`);
-      }
+  fs.readdirSync(DOCUMENT_PATH).forEach((file) => {
+    console.log(`filename : ${fileName}`);
+    if (file === `${fileName}`) {
+      haveFilse = true;
+      console.log(`file : ${file}`);
     }
-  );
+  });
   if (haveFilse) {
     var options = {
       // root: path.join(__dirname, "../documents/bookin"),
