@@ -17,7 +17,8 @@ router.get("/", function (req, res, next) {
 router.get("/book-index/:name", async function (req, res, next) {
   var fileName = req.params.name;
   var haveFilse = false;  
-  fs.readdirSync(path.join(__dirname, "../documents/bookin")).forEach(
+  // fs.readdirSync(path.join(__dirname, "../documents/bookin")).forEach(
+  fs.readdirSync(DOCUMENT_PATH).forEach(
     (file) => {
       console.log(`filename : ${fileName}`);
       if (file === `${fileName}`) {
@@ -28,8 +29,8 @@ router.get("/book-index/:name", async function (req, res, next) {
   );
   if (haveFilse) {
     var options = {
-      root: path.join(__dirname, "../documents/bookin"),
-      // root: DOCUMENT_PATH,
+      // root: path.join(__dirname, "../documents/bookin"),
+      root: DOCUMENT_PATH,
       dotfiles: "deny",
       headers: {
         "x-timestamp": Date.now(),
