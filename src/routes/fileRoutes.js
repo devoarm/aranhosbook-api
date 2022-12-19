@@ -20,11 +20,9 @@ router.get("/book-index/:name", async function (req, res, next) {
   var fileName = req.params.name;
   var haveFilse = false;
   // fs.readdirSync(path.join(__dirname, "../documents/bookin")).forEach(
-  fs.readdirSync(DOCUMENT_PATH).forEach((file) => {
-    console.log(`filename : ${fileName}`);
+  fs.readdirSync(DOCUMENT_PATH).forEach((file) => {    
     if (file === `${fileName}`) {
-      haveFilse = true;
-      console.log(`file : ${file}`);
+      haveFilse = true;      
     }
   });
   if (haveFilse) {
