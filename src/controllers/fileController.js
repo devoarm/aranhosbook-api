@@ -32,12 +32,12 @@ const GetFile = async (req, res) => {
   let sftp = new Client();
   var fileName = req.params.name;
   var options = {
-    root: DOCUMENT_PATH,
+    root: DOCUMENT_LOCAL,
   };
 
-  let remotePath = `${DOCUMENT_LOCAL}${fileName}`;
-  let dst = fs.createWriteStream(
-    `${DOCUMENT_PATH}${fileName}`
+  let remotePath = `${DOCUMENT_PATH}${fileName}`;
+  let localPath = fs.createWriteStream(
+    `${DOCUMENT_LOCAL}/${fileName}`
   );
   sftp
     .connect({
@@ -47,7 +47,7 @@ const GetFile = async (req, res) => {
       password: "hosofficeok",
     })
     .then(() => {
-      return sftp.get(remotePath, dst);
+      return sftp.get(remotePath, localPath);
     })
     .then((data) => {
       res.sendFile(fileName, options, function (err) {
@@ -59,7 +59,7 @@ const GetFile = async (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err, "catch error");
+      return res.json({ status: 500, msg: err.message });
     });
 };
 
