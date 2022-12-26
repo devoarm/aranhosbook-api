@@ -4,6 +4,7 @@ const db_office = require("../config/db");
 const fs = require("fs");
 require("dotenv").config();
 const DOCUMENT_PATH = process.env.DOCUMENT_PATH;
+const DOCUMENT_LOCAL = process.env.DOCUMENT_LOCAL;
 let Client = require("ssh2-sftp-client");
 const { default: ftp } = require("../config/ftp");
 
@@ -34,9 +35,9 @@ const GetFile = async (req, res) => {
     root: DOCUMENT_PATH,
   };
 
-  let remotePath = `/var/www/html/documents/bookin/${fileName}`;
+  let remotePath = `${DOCUMENT_LOCAL}${fileName}`;
   let dst = fs.createWriteStream(
-    `/Users/natthaphongngaongam/Devoloper/BookAran/backend/document/bookin/${fileName}`
+    `${DOCUMENT_PATH}${fileName}`
   );
   sftp
     .connect({
