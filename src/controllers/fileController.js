@@ -36,15 +36,13 @@ const GetFile = async (req, res) => {
   };
 
   let remotePath = `${DOCUMENT_PATH}${fileName}`;
-  let localPath = fs.createWriteStream(
-    `${DOCUMENT_LOCAL}/${fileName}`
-  );
+  let localPath = fs.createWriteStream(`${DOCUMENT_LOCAL}/${fileName}`);
   sftp
     .connect({
-      host: "192.168.2.7",
-      port: "22",
-      username: "root",
-      password: "hosofficeok",
+      host: process.env.hostFTP,
+      port: process.env.portFTP,
+      username: process.env.userFTP,
+      password: process.env.passwordFTP,
     })
     .then(() => {
       return sftp.get(remotePath, localPath);
@@ -52,14 +50,14 @@ const GetFile = async (req, res) => {
     .then((data) => {
       res.sendFile(fileName, options, function (err) {
         if (err) {
-          return res.json({ status: 500, msg: err.message });
+          return res.status(500).json({ status: 500, msg: err.message });
         } else {
           return;
         }
       });
     })
     .catch((err) => {
-      return res.json({ status: 500, msg: err.message });
+      return res.status(500).json({ status: 500, msg: err.message });
     });
 };
 
