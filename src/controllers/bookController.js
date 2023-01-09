@@ -4,6 +4,37 @@ const db_office = require("../config/db");
 const secret = process.env.SECRET_KEY;
 const multer = require("multer");
 
+const BookSendPerson = async (req, res) => {
+  const data = req.body;
+  try {
+    const query = await db_office("book_send_person").insert({
+      BOOK_ID: data.BOOK_ID,
+      HR_PERSON_ID: data.HR_PERSON_ID,
+      READ_STATUS: "False",
+      SEND_BY_ID: data.SEND_BY_ID,
+      SEND_BY_NAME: data.SEND_BY_NAME,
+      SEND_DATE_TIME: data.SEND_DATE_TIME,
+    });
+    return res.json({ status: 200, results: query });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
+  }
+};
+const BookOnRead = async (req, res) => {
+  const data = req.body;
+  try {
+    const query = await db_office("book_send_person")
+      .where("BOOK_ID", data.book_id)
+      .andWhere("HR_PERSON_ID", data.auth_id)
+      .update({
+        READ_STATUS: "True",
+      });
+    return res.json({ status: 200, results: query });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
+  }
+};
+
 const BookUpdatePdf = async (req, res) => {
   try {
     const { id } = req.params;
@@ -102,20 +133,6 @@ const BookIndexSendLeader = async (req, res) => {
     return res.json({ status: 500, results: error.message });
   }
 };
-const BookIndexPersonCount = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const query = await db_office("book_send_person")
-      .where("HR_PERSON_ID", id)
-      // .andWhere("READ_STATUS", false)
-      .count("id as count")
-      .first();
-
-    return res.json({ status: 200, results: query });
-  } catch (error) {
-    return res.json({ status: 500, results: error.message });
-  }
-};
 const BookIndexLeaderSign = async (req, res) => {
   const { id } = req.params;
   try {
@@ -142,6 +159,7 @@ const BookIndexPerson = async (req, res) => {
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
       .where("bp.HR_PERSON_ID", id)
+      .andWhere('bp.READ_STATUS','False')
       .orderBy("bp.SEND_DATE_TIME", "desc")
       .select(
         "bp.*",
@@ -165,5 +183,6 @@ module.exports = {
   BookIndexLeaderSign,
   BookLeaderCount,
   BookIndexPerson,
-  BookIndexPersonCount,
+  BookSendPerson,
+  BookOnRead
 };

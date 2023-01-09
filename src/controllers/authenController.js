@@ -11,6 +11,7 @@ const login = async (req, res) => {
   let body = req.body;
   try {
     const checkLogin = await db_office("hr_person")
+      .leftJoin('hr_prefix as pf','pf.HR_PREFIX_ID','hr_person.HR_PREFIX_ID')
       .where("HR_USERNAME", body.username)
       .andWhere("HR_PASSWORD", md5(body.password))
       .limit(1);
@@ -19,8 +20,9 @@ const login = async (req, res) => {
       var token = jwt.sign(
         {
           username: checkLogin[0].HR_USERNAME,
-          userId: checkLogin[0].ID,
+          userId: checkLogin[0].ID,          
           role: role,
+          p_name: checkLogin[0].HR_PREFIX_NAME,
           f_name: checkLogin[0].HR_FNAME,
           l_name: checkLogin[0].HR_LNAME,
         },

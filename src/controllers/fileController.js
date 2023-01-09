@@ -52,12 +52,13 @@ const GetFile = async (req, res) => {
         const getFtp = await sftp.get(remotePath, localPath);
         return getFtp;
       })
-      .then((data) => {
-        sftp.end();
+      .then((data) => {        
         res.sendFile(fileName, options, function (err) {
           if (err) {
+            sftp.end();
             return res.json({ status: 500, msg: err.message });
           } else {
+            sftp.end();
             return;
           }
         });

@@ -8,6 +8,7 @@ const db_office = require("knex")({
     user: process.env.userDB,
     password: process.env.passwordDB,
     database: process.env.databaseDB,
+    
   },
   pool: {
     min: 0,
