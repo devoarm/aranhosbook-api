@@ -62,7 +62,6 @@ const BookUpdatePdf = async (req, res) => {
     console.log(error.message);
   }
 };
-
 const BookDirector = async (req, res) => {
   try {
     const query = await db_office("book_send_person as bs")
@@ -104,15 +103,14 @@ const BookLeaderCount = async (req, res) => {
   }
 };
 const BookIndexSendLeader = async (req, res) => {
-  const { id, slug } = req.params;
+  const { id } = req.params;
   // return console.log(req.params);
-  const statusBook = slug === "0" ? ["SEND", "CHECK", ""] : ["YES", "NO"];
   try {
     const query = await db_office("book_index_send_leader as bl")
       .leftJoin("book_index as b", "bl.BOOK_ID", "b.ID")
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
-      .whereIn("bl.SEND_STATUS", statusBook)
+      .where("bl.SEND_STATUS", "SEND")
       .andWhere("bl.SEND_LD_HR_ID", id)
       .orderBy([
         { column: "bl.TOP_LEADER_AC_DATE_TIME", order: "desc" },
@@ -137,7 +135,7 @@ const BookIndexLeaderSign = async (req, res) => {
   const { id } = req.params;
   try {
     const query = await db_office("book_index_send_leader")
-      .where("BOOK_ID", id)
+      .where("ID", id)
       .update({
         SEND_STATUS: req.body.SEND_STATUS,
         TOP_LEADER_AC_NAME: req.body.TOP_LEADER_AC_NAME,
@@ -159,7 +157,48 @@ const BookIndexPerson = async (req, res) => {
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
       .where("bp.HR_PERSON_ID", id)
-      .andWhere('bp.READ_STATUS','False')
+      .andWhere("bp.READ_STATUS", "False")
+      .orderBy("bp.SEND_DATE_TIME", "desc")
+      .select(
+        "bp.*",
+        "b.BOOK_NAME",
+        "b.BOOK_NUMBER",
+        "b.BOOK_DETAIL",
+        "b.BOOK_URGENT_ID",
+        "bu.URGENT_NAME",
+        "bi.ID as BOOK_IMAGE_ID",
+        "bi.FILE_TYPE"
+      );
+    return res.json({ status: 200, results: query });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
+  }
+};
+const BookIndexLeaderDecide = async (req, res) => {
+  const { bookId } = req.params;
+  try {
+    const query = await db_office("book_index_send_leader as bl")
+      .where("bl.ID", bookId)
+      .select("*");
+    return res.json({ status: 200, results: query[0] });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
+  }
+};
+const BookHistoryPerson = async (req, res) => {
+  const { authId, dateStart, dateEnd } = req.query;
+  
+  try {
+    const query = await db_office("book_send_person as bp")
+      .leftJoin("book_index as b", "bp.BOOK_ID", "b.ID")
+      .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
+      .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
+      .where("bp.HR_PERSON_ID", authId)
+      .where((e) => {
+        e.orWhereIn("bp.SEND_DATE_TIME", [dateStart, dateEnd]);
+        e.orWhereBetween("bp.SEND_DATE_TIME", [dateStart, dateEnd]);
+      })
+      .andWhere("bp.READ_STATUS", "True")      
       .orderBy("bp.SEND_DATE_TIME", "desc")
       .select(
         "bp.*",
@@ -175,6 +214,68 @@ const BookIndexPerson = async (req, res) => {
     return res.json({ status: 500, results: error.message });
   }
 };
+const BookHistoryLeader = async (req, res) => {
+  const { authId, dateStart, dateEnd } = req.query;
+
+  try {
+    const query = await db_office("book_index_send_leader as bl")
+      .leftJoin("book_index as b", "bl.BOOK_ID", "b.ID")
+      .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
+      .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
+      .where((e) => {
+        e.orWhereIn("bl.TOP_LEADER_AC_DATE", [dateStart, dateEnd]);
+        e.orWhereBetween("bl.TOP_LEADER_AC_DATE", [dateStart, dateEnd]);
+      })
+      .andWhere("bl.SEND_LD_HR_ID", authId)
+      .whereIn("bl.SEND_STATUS", ["YES", "NO"])
+      .orderBy([
+        { column: "bl.TOP_LEADER_AC_DATE_TIME", order: "desc" },
+        // { column: "bl.SEND_LD_DATE_TIME", order: "desc" },
+      ])
+      .select(
+        "b.BOOK_NAME",
+        "b.BOOK_NUMBER",
+        "b.BOOK_DETAIL",
+        "b.BOOK_URGENT_ID",
+        "bu.URGENT_NAME",
+        "bl.*",
+        "bi.ID as BOOK_IMAGE_ID",
+        "bi.FILE_TYPE"
+      );
+
+    return res.json({ status: 200, results: query });
+  } catch (error) {
+    return res.json({ status: 500, results: error.message });
+  }
+};
+const BookSendToSecretary = async (req, res) => {
+  const data = req.body;
+  try {
+    const checkSended = await db_office("book_index_send_leader").where({
+      BOOK_ID: data.BOOK_ID,
+      SEND_LD_HR_ID: data.SEND_LD_HR_ID,
+      SEND_LD_BY_HR_ID: data.SEND_LD_BY_HR_ID,
+    });
+    if (checkSended.length > 0) {
+      return res.json({ status: 301, results: checkSended });
+    } else {
+      const query = await db_office("book_index_send_leader").insert({
+        BOOK_ID: data.BOOK_ID,
+        SEND_LD_HR_ID: data.SEND_LD_HR_ID,
+        SEND_LD_HR_NAME: data.SEND_LD_HR_NAME,
+        SEND_LD_BY_HR_ID: data.SEND_LD_BY_HR_ID,
+        SEND_LD_BY_HR_NAME: data.SEND_LD_BY_HR_NAME,
+        SEND_LD_DETAIL: data.SEND_LD_DETAIL,
+        SEND_LD_DATE: data.SEND_LD_DATE,
+        SEND_LD_DATE_TIME: data.SEND_LD_DATE_TIME,
+        SEND_STATUS: data.SEND_STATUS,
+      });
+      return res.json({ status: 200, results: query });
+    }
+  } catch (error) {
+    return res.json({ status: 500, results: error });
+  }
+};
 
 module.exports = {
   BookDirector,
@@ -184,5 +285,9 @@ module.exports = {
   BookLeaderCount,
   BookIndexPerson,
   BookSendPerson,
-  BookOnRead
+  BookOnRead,
+  BookSendToSecretary,
+  BookHistoryPerson,
+  BookHistoryLeader,
+  BookIndexLeaderDecide,
 };

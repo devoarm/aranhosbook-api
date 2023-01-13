@@ -6,22 +6,25 @@ var md5 = require("md5");
 
 const secret = process.env.SECRET_KEY;
 const leaderId = process.env.LEADER_ID;
+const leaderName = process.env.LEADER_NAME;
 
 const login = async (req, res) => {
   let body = req.body;
   try {
     const checkLogin = await db_office("hr_person")
-      .leftJoin('hr_prefix as pf','pf.HR_PREFIX_ID','hr_person.HR_PREFIX_ID')
+      .leftJoin("hr_prefix as pf", "pf.HR_PREFIX_ID", "hr_person.HR_PREFIX_ID")
       .where("HR_USERNAME", body.username)
       .andWhere("HR_PASSWORD", md5(body.password))
       .limit(1);
-    if (checkLogin.length > 0) {      
+    if (checkLogin.length > 0) {
       let role = checkLogin[0].ID == leaderId ? "leader" : "user";
       var token = jwt.sign(
         {
           username: checkLogin[0].HR_USERNAME,
-          userId: checkLogin[0].ID,          
+          userId: checkLogin[0].ID,
           role: role,
+          leaderId: leaderId,
+          leaderName: leaderName,
           p_name: checkLogin[0].HR_PREFIX_NAME,
           f_name: checkLogin[0].HR_FNAME,
           l_name: checkLogin[0].HR_LNAME,
@@ -31,8 +34,7 @@ const login = async (req, res) => {
       return res.json({
         status: 200,
         msg: "success",
-        token: token,
-        results: checkLogin
+        token: token,        
       });
     } else {
       return res.json({

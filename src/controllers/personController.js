@@ -18,7 +18,7 @@ const SearchFullnamePerson = async (req, res) => {
           `(SELECT hp.ID as hr_id, hp.HR_FNAME, hp.HR_LNAME,CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) as fullname FROM hr_person as hp WHERE hp.ID != ${authId}) as ss`
         )
 
-        .whereIn("ss.hr_id", [6, 3088,3322])
+        .whereIn("ss.hr_id", [6, 3088])
         .select(
           "ss.*",
           db_office.raw(
