@@ -3,7 +3,6 @@ var jwt = require("jsonwebtoken");
 const db_office = require("../config/db");
 const dbQuery = require("../config/dbQuery");
 require("dotenv").config();
-var async = require("async");
 
 const secret = process.env.SECRET_KEY;
 
