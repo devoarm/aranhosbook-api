@@ -110,7 +110,7 @@ const BookIndexSendLeader = async (req, res) => {
       .leftJoin("book_index as b", "bl.BOOK_ID", "b.ID")
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
-      .where("bl.SEND_STATUS", "SEND")
+      .where("bl.SEND_STATUS", "CHECK")
       .andWhere("bl.SEND_LD_HR_ID", id)
       .orderBy([
         { column: "bl.TOP_LEADER_AC_DATE_TIME", order: "desc" },
