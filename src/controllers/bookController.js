@@ -107,6 +107,11 @@ const BookIndexSendLeader = async (req, res) => {
   // return console.log(req.params);
   try {
     const query = await db_office("book_index_send_leader as bl")
+      .innerJoin(
+        "book_index_send_leader_secretary as bsl",
+        "bl.BOOK_ID",
+        "bsl.BOOK_ID"
+      )
       .leftJoin("book_index as b", "bl.BOOK_ID", "b.ID")
       .leftJoin("book_index_img as bi", "bi.BOOK_ID", "b.ID")
       .leftJoin("book_urgent as bu", "b.BOOK_URGENT_ID", "bu.URGENT_ID")
@@ -187,7 +192,7 @@ const BookIndexLeaderDecide = async (req, res) => {
 };
 const BookHistoryPerson = async (req, res) => {
   const { authId, dateStart, dateEnd } = req.query;
-  
+
   try {
     const query = await db_office("book_send_person as bp")
       .leftJoin("book_index as b", "bp.BOOK_ID", "b.ID")
@@ -198,7 +203,7 @@ const BookHistoryPerson = async (req, res) => {
         e.orWhereIn("bp.SEND_DATE_TIME", [dateStart, dateEnd]);
         e.orWhereBetween("bp.SEND_DATE_TIME", [dateStart, dateEnd]);
       })
-      .andWhere("bp.READ_STATUS", "True")      
+      .andWhere("bp.READ_STATUS", "True")
       .orderBy("bp.SEND_DATE_TIME", "desc")
       .select(
         "bp.*",
