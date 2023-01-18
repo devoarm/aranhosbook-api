@@ -10,7 +10,7 @@ const { default: ftp } = require("../config/ftp");
 const multer = require("multer");
 const secret = process.env.SECRET_KEY;
 const conFtp = require("../service/conFtp");
-
+const path = require("path");
 const CheckFile = async (req, res) => {
   let sftp = new Client();
   var fileName = req.params.name;
@@ -37,25 +37,26 @@ const CheckFile = async (req, res) => {
 const GetFileFtp = async (req, res) => {};
 const GetFile = async (req, res) => {
   try {
-    let sftp = new Client();
+    // let sftp = new Client();
     var fileName = req.params.name;
     var options = {
-      root: DOCUMENT_LOCAL,
+      root: path.resolve("document/bookin"),
     };
-    let remotePath = `${DOCUMENT_PATH}${fileName}`;
-    let localPath = fs.createWriteStream(`${DOCUMENT_LOCAL}/${fileName}`);
-    sftp
-      .connect(conFtp)
-      .then(() => {
-        return sftp.get(remotePath, localPath);
-      })
-      .then(() => {
-        sftp.end();
-        return res.sendFile(fileName, options)        
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    // let remotePath = `${DOCUMENT_PATH}${fileName}`;
+    // let localPath = fs.createWriteStream(`${DOCUMENT_LOCAL}/${fileName}`);
+    // sftp
+    //   .connect(conFtp)
+    //   .then(() => {
+    //     return sftp.get(remotePath, localPath);
+    //   })
+    //   .then(() => {
+    //     sftp.end();
+    console.log(fileName);
+    return res.sendFile(fileName, options);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err.message);
+    //   });
   } catch (error) {
     return res.json({ status: 500, msg: error.message });
   }
@@ -111,7 +112,7 @@ const sendFtp = async (req, res) => {
         return res.json({ status: 200, msg: send });
       });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     return res.json({ status: 500, msg: err.message });
   }
 };
