@@ -20,7 +20,7 @@ const CheckFile = async (req, res) => {
     .then(() => {
       return sftp.exists(`${DOCUMENT_PATH}${fileName}`);
     })
-    .then((data) => {      
+    .then((data) => {
       if (!data) {
         return res.json({ status: 301, msg: "no data" });
       } else {
@@ -34,9 +34,7 @@ const CheckFile = async (req, res) => {
       console.error(err.message);
     });
 };
-const GetFileFtp = async (req, res) => {
-
-};
+const GetFileFtp = async (req, res) => {};
 const GetFile = async (req, res) => {
   try {
     let sftp = new Client();
@@ -48,23 +46,15 @@ const GetFile = async (req, res) => {
     let localPath = fs.createWriteStream(`${DOCUMENT_LOCAL}/${fileName}`);
     sftp
       .connect(conFtp)
-      .then(async () => {
-        const getFtp = await sftp.get(remotePath, localPath);
-        return getFtp;
+      .then(() => {
+        return sftp.get(remotePath, localPath);
       })
-      .then((data) => {        
-        res.sendFile(fileName, options, function (err) {
-          if (err) {
-            sftp.end();
-            return res.json({ status: 500, msg: err.message });
-          } else {
-            sftp.end();
-            return;
-          }
-        });
+      .then(() => {
+        sftp.end();
+        return res.sendFile(fileName, options)        
       })
       .catch((err) => {
-        return res.json({ status: 500, msg: err.message });
+        console.error(err.message);
       });
   } catch (error) {
     return res.json({ status: 500, msg: error.message });
@@ -121,6 +111,7 @@ const sendFtp = async (req, res) => {
         return res.json({ status: 200, msg: send });
       });
   } catch (error) {
+    console.log(error.message)
     return res.json({ status: 500, msg: err.message });
   }
 };
