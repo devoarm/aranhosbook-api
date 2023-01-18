@@ -12,51 +12,19 @@ const secret = process.env.SECRET_KEY;
 const conFtp = require("../service/conFtp");
 const path = require("path");
 const CheckFile = async (req, res) => {
-  let sftp = new Client();
-  var fileName = req.params.name;
-  var haveFilse = false;
-  sftp
-    .connect(conFtp)
-    .then(() => {
-      return sftp.exists(`${DOCUMENT_PATH}${fileName}`);
-    })
-    .then((data) => {
-      if (!data) {
-        return res.json({ status: 301, msg: "no data" });
-      } else {
-        return res.json({ status: 200, msg: "has data" });
-      }
-    })
-    .then(() => {
-      sftp.end();
-    })
-    .catch((err) => {
-      console.error(err.message);
-    });
+  return res.json({ status: 200, msg: "has data" });
 };
-const GetFileFtp = async (req, res) => {};
+
 const GetFile = async (req, res) => {
   try {
-    // let sftp = new Client();
     var fileName = req.params.name;
     var options = {
       root: path.resolve("document/bookin"),
     };
-    // let remotePath = `${DOCUMENT_PATH}${fileName}`;
-    // let localPath = fs.createWriteStream(`${DOCUMENT_LOCAL}/${fileName}`);
-    // sftp
-    //   .connect(conFtp)
-    //   .then(() => {
-    //     return sftp.get(remotePath, localPath);
-    //   })
-    //   .then(() => {
-    //     sftp.end();
+  
     console.log(fileName);
     return res.sendFile(fileName, options);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err.message);
-    //   });
+    
   } catch (error) {
     return res.json({ status: 500, msg: error.message });
   }
