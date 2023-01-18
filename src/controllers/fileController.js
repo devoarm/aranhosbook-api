@@ -19,7 +19,7 @@ const GetFile = async (req, res) => {
   try {
     var fileName = req.params.name;
     var options = {
-      root: path.resolve("document/bookin"),
+      root: path.resolve("../documents/bookin"),
     };
   
     console.log(fileName);
