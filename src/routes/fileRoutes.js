@@ -19,5 +19,4 @@ router.get("/check/:name", CheckFile);
 router.get("/book-index/:name", GetFile);
 // router.post("/update-book/:filename", multipartUpload, updateFile);
 router.post("/update-book/:filename", updateFile);
-router.get("/send-ftp/:filename", sendFtp);
 module.exports = router;
