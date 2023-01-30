@@ -12,7 +12,7 @@ var glob = require("glob");
 
 const CheckFile = async (req, res) => {
   const { name } = req.params;
-  glob(`../documents/bookin/${name}`, function (er, files) {
+  glob(`${DOCUMENT_PATH}/bookin/${name}`, function (er, files) {
     if (files.length > 0) {
       console.log(files);
       return res.json({ status: 200, msg: "has data" });
