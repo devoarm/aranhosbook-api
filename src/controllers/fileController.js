@@ -44,7 +44,7 @@ const updateFile = async (req, res) => {
     const { filename } = req.params;
     const storage = multer.diskStorage({
       destination: function (req, file, callback) {
-        callback(null, `../documents/bookin`);
+        callback(null, `${DOCUMENT_PATH}/bookin`);
       },
       filename: function (req, file, callback) {
         console.log(`${filename}.${file.fieldname}`);
