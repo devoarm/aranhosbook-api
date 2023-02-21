@@ -56,7 +56,7 @@ const Register = async (req, res) => {
     HR_FNAME: data.fname,
     HR_LNAME: data.lname,
     SEX: data.sex,
-    HR_PASSWORD: md5(data.username),
+    HR_PASSWORD: md5(data.password),
   });
   return res.json({
     status: 200,
