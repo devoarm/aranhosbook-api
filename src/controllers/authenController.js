@@ -17,7 +17,7 @@ const login = async (req, res) => {
       .andWhere("HR_PASSWORD", md5(body.password))
       .limit(1);
     if (checkLogin.length > 0) {
-      let role = checkLogin[0].ID == leaderId ? "leader" : "user";
+      let role = checkLogin[0].ID == leaderId ? "leader" : "client";
       var token = jwt.sign(
         {
           username: checkLogin[0].HR_USERNAME,
@@ -34,7 +34,7 @@ const login = async (req, res) => {
       return res.json({
         status: 200,
         msg: "success",
-        token: token,        
+        userData: token,
       });
     } else {
       return res.json({
@@ -47,6 +47,22 @@ const login = async (req, res) => {
   }
 };
 
+const Register = async (req, res) => {
+  const data = req.body;
+  const query = await db_office("hr_person").insert({
+    HR_CID: data.username,
+    HR_USERNAME: data.username,
+    HR_PREFIX_ID: data.pname,
+    HR_FNAME: data.fname,
+    HR_LNAME: data.lname,
+    SEX: data.sex,
+    HR_PASSWORD: md5(data.username),
+  });
+  return res.json({
+    status: 200,
+    results: query,
+  });
+};
 const logout = async (req, res) => {
   const authHeader = req.headers["authorization"];
   var token = jwt.sign(authHeader, "", { expiresIn: 1 }, (logout, err) => {
@@ -61,4 +77,4 @@ const logout = async (req, res) => {
 const CheckToken = async (req, res) => {
   return res.json({ status: 200, msg: "IsLogedin", headers: req.headers });
 };
-module.exports = { login, CheckToken };
+module.exports = { login, CheckToken, Register };
