@@ -1,6 +1,6 @@
 const saltRounds = 10;
 var jwt = require("jsonwebtoken");
-const db_office = require("../config/db");
+const db_office = require("../config/dbHosOff");
 const fs = require("fs");
 require("dotenv").config();
 const DOCUMENT_PATH = process.env.DOCUMENT_PATH;

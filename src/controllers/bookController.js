@@ -1,6 +1,6 @@
 var jwt = require("jsonwebtoken");
 require("dotenv").config();
-const db_office = require("../config/db");
+const db_office = require("../config/dbHosOff");
 const secret = process.env.SECRET_KEY;
 const multer = require("multer");
 

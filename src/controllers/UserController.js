@@ -1,6 +1,6 @@
 const saltRounds = 10;
 var jwt = require("jsonwebtoken");
-const db_office = require("../config/db");
+const db_office = require("../config/dbHosOff");
 require("dotenv").config();
 
 const secret = process.env.SECRET_KEY;

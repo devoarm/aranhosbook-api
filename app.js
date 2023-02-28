@@ -23,6 +23,8 @@ app.use("/user", require("./src/routes/userRoutes"));
 app.use("/file", require("./src/routes/fileRoutes"));
 app.use("/auth", require("./src/routes/authRoutes"));
 app.use("/book", require("./src/routes/bookRoutes"));
+app.use("/dbudget", require("./src/routes/dbudgetRoutes"));
 app.use("/person", require("./src/routes/personRoutes"));
+app.use("/drug", require("./src/routes/drugRoutes"));
 
 module.exports = app;
