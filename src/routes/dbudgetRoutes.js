@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
-var dbHos = require('../config/dbQueryHosXp')
+var dbHos = require('../config/dbQueryHosXp');
+const dbRcm = require("../config/dbQueryRcm");
 
 /* GET IPD */
 router.get("/ipd-sum", (req, res) => {
@@ -787,7 +788,7 @@ FROM repdata r
 WHERE  
 r.AdmDate BETWEEN '2022-10-01' AND '2023-09-30'
 GROUP BY r.MainInscl `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
      if (err) return res.json({ status: 500, message: err });
      else return res.json({ status: 200, result: result });
    });
@@ -1108,7 +1109,7 @@ router.get("/visit-opd", (req, res) => {
   WHERE s.AdmDate BETWEEN '2022-10-01' AND '2023-09-30'
   GROUP BY s.Fund
   `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
    if (err) return res.json({ status: 500, message: err });
    else return res.json({ status: 200, result: result });
  });
@@ -1146,7 +1147,7 @@ router.get("/seamless-detail/:fund_code/:date1/:date2", async (req, res) => {
   WHERE s.AdmDate BETWEEN '${date1}'  AND '${date2}'
   AND LEFT(s.Rep,4) = '${fund_code}'
   `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
    if (err) return res.json({ status: 500, message: err });
    else return res.json({ status: 200, result: result });
  });
@@ -1166,7 +1167,7 @@ router.get("/seamless-sum", async (req, res) => {
   WHERE s.AdmDate BETWEEN '2022-10-01' AND '2023-09-30'
   GROUP BY s.Fund 
   `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
    if (err) return res.json({ status: 500, message: err });
    else return res.json({ status: 200, result: result });
  });
@@ -1201,7 +1202,7 @@ router.get("/seamless-tb", async (req, res) => {
   WHERE s.AdmDate BETWEEN '2022-10-01' AND '2023-09-30'
   AND  LEFT(s.Rep,4) = 'DMTB'
   `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
    if (err) return res.json({ status: 500, message: err });
    else return res.json({ status: 200, result: result });
  });
@@ -1236,7 +1237,7 @@ router.get("/seamless-dow", async (req, res) => {
   WHERE s.AdmDate BETWEEN '2022-10-01' AND '2023-09-30'
   AND  LEFT(s.Rep,4) = 'DDOW'
   `;
-      db3.query(sql, (err, result) => {
+      dbRcm.query(sql, (err, result) => {
    if (err) return res.json({ status: 500, message: err });
    else return res.json({ status: 200, result: result });
  });
